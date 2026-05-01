@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Henry Developer - Hồ sơ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* ----- GIỮ NGUYÊN STYLE GỐC (chỉ thêm style cho nút edit & modal) ----- */
+        :root {
+            --glass: rgba(20, 20, 20, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --rainbow: linear-gradient(90deg, #a8edea, #fed6e3, #fac1ff, #d4fc79, #96e6a1, #a8edea);
+            --jd-gradient: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        #jsi-flying-fish-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #050505;
+        }
+        .main-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+        .rainbow-text {
+            background: var(--rainbow);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow_move 4s linear infinite;
+            font-weight: 800;
+        }
+        @keyframes rainbow_move {
+            to { background-position: 200% center; }
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .avatar-wrap {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .avatar-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        .avatar-frame {
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            top: -10px;
+            left: -10px;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .henry-gaming {
+            margin-top: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+        .social-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .social-item {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            transition: 0.4s;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+        }
+        .social-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            color: #fff;
+        }
+        .jd-music-container {
+            margin: 30px 0 10px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+        #contribution-grid {
+            display: grid;
+            grid-template-columns: repeat(52, 1fr);
+            grid-template-rows: repeat(7, 1fr);
+            gap: 3px;
+        }
+        .dot {
+            aspect-ratio: 1/1;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .dot.jd-active {
+            background-image: var(--jd-gradient);
+            background-size: 800% 800%;
+            animation: jd_glow 2s linear infinite;
+        }
+        @keyframes jd_glow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .info-item {
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 5px 0;
+        }
+        .info-item i {
+            width: 25px;
+            color: #4facfe;
+            margin-right: 5px;
+        }
+        .skill-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .progress-box {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--rainbow);
+            background-size: 200% auto;
+            animation: rainbow_move 4s linear infinite;
+        }
+        .music-player {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.5);
+            border-radius: 40px;
+            padding: 8px 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+        }
+        .music-player button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .music-player button:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 10px #fff;
+        }
+        /* Nút chỉnh sửa góc trái dưới */
+        .edit-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 10px 18px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .edit-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+        /* Modal tùy chỉnh */
+        .modal-custom {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #111;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            color: white;
+        }
+        .modal-content h3 {
+            margin-bottom: 20px;
+        }
+        .modal-content input, .modal-content textarea, .modal-content select {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: white;
+            border-radius: 8px;
+        }
+        .modal-content label {
+            font-weight: bold;
+            margin-top: 5px;
+            display: block;
+        }
+        .skill-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .skill-row input {
+            flex: 1;
+        }
+        .about-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .about-row input {
+            flex: 1;
+        }
+        .social-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .social-row input {
+            flex: 1;
+        }
+        button {
+            background: #4facfe;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        button.danger {
+            background: #ff416c;
+        }
+        @media (max-width: 768px) {
+            .profile-header { flex-direction: column; text-align: center; }
+            .info-grid, .skill-list { grid-template-columns: 1fr; }
+            #contribution-grid { grid-template-columns: repeat(26, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<div id="jsi-flying-fish-container"></div>
+<div class="main-wrapper">
+    <!-- Khu vực hiển thị profile sẽ được render bằng JS -->
+    <div id="profileRoot"></div>
+    <footer style="text-align: center; padding: 20px;" class="rainbow-text" id="copyrightText"></footer>
+</div>
+
+<!-- Nút chỉnh sửa góc trái -->
+<div class="edit-btn" id="editBtn">
+    <i class="fas fa-pen"></i> Chỉnh sửa
+</div>
+
+<!-- Modal tùy chỉnh -->
+<div id="editModal" class="modal-custom">
+    <div class="modal-content">
+        <h3><i class="fas fa-sliders-h"></i> Tùy chỉnh hồ sơ</h3>
+        <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
+            <label>Tên hiển thị (DatDev)</label>
+            <input type="text" id="edit_name" placeholder="VD: DatDev">
+            <label>Họ tên đầy đủ (Nguyễn Lâm Trường)</label>
+            <input type="text" id="edit_fullName">
+            <label>Chức danh (Full Stack Developer)</label>
+            <input type="text" id="edit_role">
+            <label>Hashtag</label>
+            <input type="text" id="edit_hashtag">
+            <label>URL ảnh đại diện (avatar)</label>
+            <input type="text" id="edit_avatarUrl">
+            <label>URL khung ảnh (frame)</label>
+            <input type="text" id="edit_frameUrl">
+            <label>Bản quyền footer</label>
+            <input type="text" id="edit_copyright">
+            <hr>
+            <label><i class="fas fa-music"></i> Bài hát (tên)</label>
+            <input type="text" id="edit_songName">
+            <label>Link nhạc (mp3, ogg, ...)</label>
+            <input type="text" id="edit_songUrl">
+            <hr>
+            <label><i class="fas fa-code-branch"></i> Kỹ năng (nhấn + để thêm)</label>
+            <div id="skillsEditor"></div>
+            <button type="button" id="addSkillBtn">+ Thêm kỹ năng</button>
+            <hr>
+            <label><i class="fas fa-info-circle"></i> Thông tin About (icon + text)</label>
+            <div id="aboutEditor"></div>
+            <button type="button" id="addAboutBtn">+ Thêm mục About</button>
+            <hr>
+            <label><i class="fas fa-share-alt"></i> Social Links (key: facebook, github, telegram, tiktok, codeCompare)</label>
+            <div id="socialEditor"></div>
+            <button type="button" id="addSocialBtn">+ Thêm mạng xã hội</button>
+        </div>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button id="saveConfigBtn">Lưu lại</button>
+            <button id="closeModalBtn" class="danger">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    // ========== CẤU HÌNH MẶC ĐỊNH ==========
+    const defaultConfig = {
+        name: "Khang",
+        fullName: "Lê Viết Tấn Khang",
+        role: "Full Stack Developer",
+        hashtag: "#ezlove_Tkhang_bluse",
+        avatarUrl: "https://i.ibb.co/pv0PD0qw/z7716948537569-08f1bb7e2b2a379d87f958df2723ad5a.jpg",
+        frameUrl: "https://raw.githubusercontent.com/WusThanhDieu/Profile-ThanhDieu.Com-V5-Tester/refs/heads/main/res/v5/img/crown/mong-vuot-rong.png",
+        aboutItems: [
+            { icon: "fa-calendar", text: "13/3/2012" },
+            { icon: "fa-briefcase", text: "Dev Fullstack & Security" },
+            { icon: "fa-heart", text: "Lập trình, Nghe nhạc, Code" },
+            { icon: "fa-map-marker", text: "HỒ CHÍ MINH, Việt Nam" },
+            { icon: "fa-envelope", text: "kl5823633@gmail.com" },
+            { icon: "fa-paper-plane", text: "@tankhangcutesz" },
+            { icon: "fa-terminal", text: "Thích code Dạo, Hay Fake Style" },
+            { icon: "fa-shield-halved", text: "Đang phát triển Bot-net" }
+        ],
+        skills: [
+            { name: "HTML | CSS | JS", percent: 95 },
+            { name: "PYTHON (Security)", percent: 90 },
+            { name: "NODE.JS / TS", percent: 85 },
+            { name: "DATABASE (SQL)", percent: 88 }
+        ],
+        social: {
+            facebook: "https://www.facebook.com/share/1CmVjxDXju/",
+            github: "https://github.com/kl5823633-cloud",
+            telegram: "https://t.me/tankhangctedzai",
+            tiktok: "https://tiktok.com/@handoicholon.1",
+            codeCompare: "#"
+        },
+        copyright: "COPYRIGHT © 2026 HENRY DEVELOPER - ALL RIGHTS RESERVED"
+    };
+
+    const defaultMusic = {
+        songUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        songName: "SoundHelix - Nhạc nền"
+    };
+
+    // Load từ localStorage hoặc dùng mặc định
+    let siteConfig = JSON.parse(localStorage.getItem('henry_config')) || defaultConfig;
+    let musicConfig = JSON.parse(localStorage.getItem('henry_music')) || defaultMusic;
+
+    // Hàm lưu config
+    function saveConfigToLocal() {
+        localStorage.setItem('henry_config', JSON.stringify(siteConfig));
+        localStorage.setItem('henry_music', JSON.stringify(musicConfig));
+    }
+
+    // ========== RENDER PROFILE ==========
+    function renderProfile() {
+        const root = document.getElementById('profileRoot');
+        if (!root) return;
+        root.innerHTML = `
+            <div class="glass-card">
+                <div class="music-player">
+                    <button id="playPauseBtn"><i class="fas fa-play"></i></button>
+                    <span id="songNameLabel">${musicConfig.songName}</span>
+                    <audio id="bgMusic" loop src="${musicConfig.songUrl}"></audio>
+                </div>
+                <div class="profile-header">
+                    <div class="avatar-section">
+                        <div class="avatar-wrap">
+                            <img src="${siteConfig.avatarUrl}" class="avatar-img" id="avatarImg">
+                            <img src="${siteConfig.frameUrl}" class="avatar-frame" id="frameImg">
+                        </div>
+                        <div class="henry-gaming rainbow-text">${siteConfig.fullName}</div>
+                    </div>
+                    <div class="user-info">
+                        <h1 class="rainbow-text" style="font-size: 3rem; margin: 0; line-height: 1;"><span>${siteConfig.name}</span><span style="color:#ff416c">Dev</span></h1>
+                        <div class="rainbow-text" style="font-size: 1.1rem; margin: 10px 0; font-weight: 600;">${siteConfig.role}</div>
+                        <p class="rainbow-text" style="font-size: 0.8rem; opacity: 0.8; letter-spacing: 1px;">${siteConfig.hashtag}</p>
+                        <div class="social-links" id="socialLinks"></div>
+                    </div>
+                </div>
+                <div class="jd-music-container">
+                    <div id="contribution-grid"></div>
+                </div>
+            </div>
+            <div class="glass-card">
+                <h5 class="rainbow-text mb-4"><i class="fa fa-user-circle"></i> ABOUT ME.</h5>
+                <div class="info-grid" id="aboutGrid"></div>
+            </div>
+            <div class="glass-card">
+                <h5 class="rainbow-text mb-4"><i class="fa fa-code"></i> SKILL LANGUAGE.</h5>
+                <div class="skill-list" id="skillList"></div>
+            </div>
+        `;
+        document.getElementById('copyrightText').innerHTML = siteConfig.copyright;
+        // Render social
+        const socialContainer = document.getElementById('socialLinks');
+        if (socialContainer) {
+            socialContainer.innerHTML = '';
+            const socialIcons = { facebook: 'fab fa-facebook-f', github: 'fab fa-github', telegram: 'fab fa-telegram-plane', tiktok: 'fab fa-tiktok', codeCompare: 'fas fa-code-compare' };
+            for (const [key, icon] of Object.entries(socialIcons)) {
+                if (siteConfig.social[key]) {
+                    const a = document.createElement('a');
+                    a.href = siteConfig.social[key];
+                    a.className = 'social-item';
+                    a.target = '_blank';
+                    a.innerHTML = `<i class="${icon}"></i>`;
+                    socialContainer.appendChild(a);
+                }
+            }
+        }
+        // About grid
+        const aboutGrid = document.getElementById('aboutGrid');
+        if (aboutGrid) {
+            aboutGrid.innerHTML = '';
+            siteConfig.aboutItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'info-item rainbow-text';
+                div.innerHTML = `<i class="fa ${item.icon}"></i> ${item.text}`;
+                aboutGrid.appendChild(div);
+            });
+        }
+        // Skills
+        const skillList = document.getElementById('skillList');
+        if (skillList) {
+            skillList.innerHTML = '';
+            siteConfig.skills.forEach(skill => {
+                const div = document.createElement('div');
+                div.className = 'skill-item';
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between rainbow-text">
+                        <span>${skill.name}</span><span>${skill.percent}%</span>
+                    </div>
+                    <div class="progress-box"><div class="progress-bar" style="width: ${skill.percent}%"></div></div>
+                `;
+                skillList.appendChild(div);
+            });
+        }
+        // Khởi tạo lại audio player
+        const audio = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playPauseBtn');
+        if (audio && playBtn) {
+            audio.src = musicConfig.songUrl;
+            let isPlaying = false;
+            playBtn.onclick = () => {
+                if (isPlaying) {
+                    audio.pause();
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                } else {
+                    audio.play().catch(e => console.log(e));
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+                isPlaying = !isPlaying;
+            };
+        }
+        // Contribution grid (tái tạo)
+        const grid = document.getElementById('contribution-grid');
+        if (grid) {
+            grid.innerHTML = '';
+            const rows = 7, cols = 52;
+            for (let i = 0; i < rows * cols; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                grid.appendChild(dot);
+            }
+            const dots = document.querySelectorAll('#contribution-grid .dot');
+            if (window.jdInterval) clearInterval(window.jdInterval);
+            window.jdInterval = setInterval(() => {
+                dots.forEach(d => d.classList.remove('jd-active'));
+                for (let c = 0; c < cols; c++) {
+                    const h = Math.floor(Math.random() * rows);
+                    for (let r = 0; r <= h; r++) {
+                        const idx = (rows - 1 - r) * cols + c;
+                        if (dots[idx]) dots[idx].classList.add('jd-active');
+                    }
+                }
+            }, 130);
+        }
+    }
+
+    // ========== FLYING FISH ==========
+    function initFlyingFish() {
+        // (Giữ nguyên script từ code gốc, nhưng đặt trong hàm để gọi sau render)
+        var RENDERER = {
+            POINT_INTERVAL: 5, FISH_COUNT: 3, MAX_INTERVAL_COUNT: 50, INIT_HEIGHT_RATE: 0.5, THRESHOLD: 50,
+            init: function () { this.setParameters(); this.reconstructMethods(); this.setup(); this.bindEvent(); this.render() },
+            setParameters: function () {
+                this.$window = $(window); this.$container = $("#jsi-flying-fish-container"); this.$canvas = $("<canvas />");
+                this.context = this.$canvas.appendTo(this.$container).get(0).getContext("2d");
+                this.points = []; this.fishes = []; this.watchIds = [];
+            },
+            createSurfacePoints: function () {
+                var count = Math.round(this.width / this.POINT_INTERVAL);
+                this.pointInterval = this.width / (count - 1);
+                this.points.push(new SURFACE_POINT(this, 0));
+                for (var i = 1; i < count; i++) {
+                    var point = new SURFACE_POINT(this, i * this.pointInterval), previous = this.points[i - 1];
+                    point.setPreviousPoint(previous); previous.setNextPoint(point); this.points.push(point);
+                }
+            },
+            reconstructMethods: function () {
+                this.watchWindowSize = this.watchWindowSize.bind(this); this.jdugeToStopResize = this.jdugeToStopResize.bind(this);
+                this.startEpicenter = this.startEpicenter.bind(this); this.moveEpicenter = this.moveEpicenter.bind(this);
+                this.reverseVertical = this.reverseVertical.bind(this); this.render = this.render.bind(this);
+            },
+            setup: function () {
+                this.points.length = 0; this.fishes.length = 0; this.watchIds.length = 0; this.intervalCount = this.MAX_INTERVAL_COUNT;
+                this.width = this.$container.width(); this.height = this.$container.height();
+                this.fishCount = this.FISH_COUNT * this.width / 500 * this.height / 500;
+                this.$canvas.attr({ width: this.width, height: this.height });
+                this.reverse = false; this.fishes.push(new FISH(this)); this.createSurfacePoints();
+            },
+            watchWindowSize: function () { this.clearTimer(); this.tmpWidth = this.$window.width(); this.tmpHeight = this.$window.height(); this.watchIds.push(setTimeout(this.jdugeToStopResize, 300)); },
+            clearTimer: function () { while (this.watchIds.length > 0) { clearTimeout(this.watchIds.pop()) } },
+            jdugeToStopResize: function () { var width = this.$window.width(), height = this.$window.height(), stopped = (width == this.tmpWidth && height == this.tmpHeight); this.tmpWidth = width; this.tmpHeight = height; if (stopped) { this.setup() } },
+            bindEvent: function () { this.$window.on("resize", this.watchWindowSize); this.$container.on("mouseenter", this.startEpicenter); this.$container.on("mousemove", this.moveEpicenter); this.$container.on("click", this.reverseVertical); },
+            getAxis: function (event) { var offset = this.$container.offset(); return { x: event.clientX - offset.left + this.$window.scrollLeft(), y: event.clientY - offset.top + this.$window.scrollTop() } },
+            startEpicenter: function (event) { this.axis = this.getAxis(event) },
+            moveEpicenter: function (event) { var axis = this.getAxis(event); if (!this.axis) { this.axis = axis } this.generateEpicenter(axis.x, axis.y, axis.y - this.axis.y); this.axis = axis; },
+            generateEpicenter: function (x, y, velocity) { if (y < this.height / 2 - this.THRESHOLD || y > this.height / 2 + this.THRESHOLD) { return } var index = Math.round(x / this.pointInterval); if (index < 0 || index >= this.points.length) { return } this.points[index].interfere(y, velocity); },
+            reverseVertical: function () { this.reverse = !this.reverse; for (var i = 0, count = this.fishes.length; i < count; i++) { this.fishes[i].reverseVertical() } },
+            controlStatus: function () { for (var i = 0, count = this.points.length; i < count; i++) { this.points[i].updateSelf() } for (var i = 0, count = this.points.length; i < count; i++) { this.points[i].updateNeighbors() } if (this.fishes.length < this.fishCount) { if (--this.intervalCount == 0) { this.intervalCount = this.MAX_INTERVAL_COUNT; this.fishes.push(new FISH(this)) } } },
+            render: function () {
+                requestAnimationFrame(this.render); this.controlStatus();
+                this.context.clearRect(0, 0, this.width, this.height);
+                this.context.fillStyle = "rgba(255, 255, 255, 0.22)";
+                for (var i = 0, count = this.fishes.length; i < count; i++) { this.fishes[i].render(this.context) }
+                this.context.save(); this.context.globalCompositeOperation = "xor"; this.context.beginPath(); this.context.moveTo(0, this.reverse ? 0 : this.height);
+                for (var i = 0, count = this.points.length; i < count; i++) { this.points[i].render(this.context) }
+                this.context.lineTo(this.width, this.reverse ? 0 : this.height); this.context.closePath(); this.context.fill(); this.context.restore();
+            }
+        };
+        var SURFACE_POINT = function (renderer, x) { this.renderer = renderer; this.x = x; this.init() };
+        SURFACE_POINT.prototype = {
+            SPRING_CONSTANT: 0.03, SPRING_FRICTION: 0.9, WAVE_SPREAD: 0.3, ACCELARATION_RATE: 0.01,
+            init: function () { this.initHeight = this.renderer.height * this.renderer.INIT_HEIGHT_RATE; this.height = this.initHeight; this.fy = 0; this.force = { previous: 0, next: 0 } },
+            setPreviousPoint: function (previous) { this.previous = previous }, setNextPoint: function (next) { this.next = next },
+            interfere: function (y, velocity) { this.fy = this.renderer.height * this.ACCELARATION_RATE * ((this.renderer.height - this.height - y) >= 0 ? -1 : 1) * Math.abs(velocity) },
+            updateSelf: function () { this.fy += this.SPRING_CONSTANT * (this.initHeight - this.height); this.fy *= this.SPRING_FRICTION; this.height += this.fy },
+            updateNeighbors: function () { if (this.previous) { this.force.previous = this.WAVE_SPREAD * (this.height - this.previous.height) } if (this.next) { this.force.next = this.WAVE_SPREAD * (this.height - this.next.height) } },
+            render: function (context) { if (this.previous) { this.previous.height += this.force.previous; this.previous.fy += this.force.previous } if (this.next) { this.next.height += this.force.next; this.next.fy += this.force.next } context.lineTo(this.x, this.renderer.height - this.height); }
+        };
+        var FISH = function (renderer) { this.renderer = renderer; this.init() };
+        FISH.prototype = {
+            GRAVITY: 0.4,
+            init: function () { this.direction = Math.random() < 0.5; this.x = this.direction ? (this.renderer.width + this.renderer.THRESHOLD) : -this.renderer.THRESHOLD; this.vx = (Math.random() * 5 + 3) * (this.direction ? -1 : 1); this.y = (Math.random() * this.renderer.height * 0.3) + (this.renderer.height * 0.6); this.vy = Math.random() * -3 - 2; this.ay = Math.random() * -0.15 - 0.05; this.isOut = false; },
+            reverseVertical: function () { this.isOut = !this.isOut; this.ay *= -1 },
+            controlStatus: function (context) { this.previousY = this.y; this.x += this.vx; this.y += this.vy; this.vy += this.ay; if (this.y < this.renderer.height * this.renderer.INIT_HEIGHT_RATE) { this.vy += this.GRAVITY; this.isOut = true } else { this.isOut = false } this.renderer.generateEpicenter(this.x, this.y, this.y - this.previousY); if (this.vx > 0 && this.x > this.renderer.width + this.renderer.THRESHOLD || this.vx < 0 && this.x < -this.renderer.THRESHOLD) { this.init() } },
+            render: function (context) { context.save(); context.translate(this.x, this.y); context.rotate(Math.PI + Math.atan2(this.vy, this.vx)); context.scale(1, this.direction ? 1 : -1); context.beginPath(); context.moveTo(-25, 0); context.bezierCurveTo(-15, 12, 10, 8, 30, 0); context.bezierCurveTo(10, -8, -15, -12, -25, 0); context.fill(); context.restore(); this.controlStatus(context); }
+        };
+        $(function () { RENDERER.init(); });
+    }
+
+    // ========== MODAL EDITOR ==========
+    function openEditor() {
+        const modal = document.getElementById('editModal');
+        // Đổ dữ liệu hiện tại vào form
+        document.getElementById('edit_name').value = siteConfig.name;
+        document.getElementById('edit_fullName').value = siteConfig.fullName;
+        document.getElementById('edit_role').value = siteConfig.role;
+        document.getElementById('edit_hashtag').value = siteConfig.hashtag;
+        document.getElementById('edit_avatarUrl').value = siteConfig.avatarUrl;
+        document.getElementById('edit_frameUrl').value = siteConfig.frameUrl;
+        document.getElementById('edit_copyright').value = siteConfig.copyright;
+        document.getElementById('edit_songName').value = musicConfig.songName;
+        document.getElementById('edit_songUrl').value = musicConfig.songUrl;
+        // Skills editor
+        const skillsDiv = document.getElementById('skillsEditor');
+        skillsDiv.innerHTML = '';
+        siteConfig.skills.forEach((skill, idx) => {
+            const div = document.createElement('div');
+            div.className = 'skill-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Tên kỹ năng" value="${escapeHtml(skill.name)}">
+                <input type="number" placeholder="%" value="${skill.percent}" min="0" max="100">
+                <button type="button" class="removeSkillBtn" data-idx="${idx}">Xóa</button>
+            `;
+            skillsDiv.appendChild(div);
+        });
+        // About editor
+        const aboutDiv = document.getElementById('aboutEditor');
+        aboutDiv.innerHTML = '';
+        siteConfig.aboutItems.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'about-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Icon (vd: fa-calendar)" value="${escapeHtml(item.icon)}">
+                <input type="text" placeholder="Nội dung" value="${escapeHtml(item.text)}">
+                <button type="button" class="removeAboutBtn" data-idx="${idx}">Xóa</button>
+            `;
+            aboutDiv.appendChild(div);
+        });
+        // Social editor
+        const socialDiv = document.getElementById('socialEditor');
+        socialDiv.innerHTML = '';
+        for (const [key, value] of Object.entries(siteConfig.social)) {
+            const div = document.createElement('div');
+            div.className = 'social-row';
+            div.innerHTML = `
+                <input type="text" placeholder="Key (facebook, github...)" value="${escapeHtml(key)}">
+                <input type="text" placeholder="Link" value="${escapeHtml(value)}">
+                <button type="button" class="removeSocialBtn" data-key="${key}">Xóa</button>
+            `;
+            socialDiv.appendChild(div);
+        }
+        modal.style.display = 'flex';
+    }
+
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    function closeModal() { document.getElementById('editModal').style.display = 'none'; }
+
+    function saveChanges() {
+        // Lấy giá trị từ form
+        siteConfig.name = document.getElementById('edit_name').value;
+        siteConfig.fullName = document.getElementById('edit_fullName').value;
+        siteConfig.role = document.getElementById('edit_role').value;
+        siteConfig.hashtag = document.getElementById('edit_hashtag').value;
+        siteConfig.avatarUrl = document.getElementById('edit_avatarUrl').value;
+        siteConfig.frameUrl = document.getElementById('edit_frameUrl').value;
+        siteConfig.copyright = document.getElementById('edit_copyright').value;
+        musicConfig.songName = document.getElementById('edit_songName').value;
+        musicConfig.songUrl = document.getElementById('edit_songUrl').value;
+        // Skills
+        const skillRows = document.querySelectorAll('#skillsEditor .skill-row');
+        const newSkills = [];
+        skillRows.forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if (inputs.length >= 2) {
+                newSkills.push({ name: inputs[0].value, percent: parseInt(inputs[1].value) || 0 });
+            }
+        });
+        siteConfig.skills = newSkills;
+        // About
+        const aboutRows = document.querySelectorAll('#aboutEditor .about-row');
+        const newAbout = [];
+        aboutRows.forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if (inputs.length >= 2) {
+                newAbout.push({ icon: inputs[0].value, text: inputs[1].value });
+            }
+        });
+        siteConfig.aboutItems = newAbout;
+        // Social
+        const socialRows = document.querySelectorAll('#socialEditor .social-row');
+        const newSocial = {};
+        socialRows.forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if (inputs.length >= 2 && inputs[0].value.trim() !== '') {
+                newSocial[inputs[0].value] = inputs[1].value;
+            }
+        });
+        siteConfig.social = newSocial;
+        // Lưu và render lại
+        saveConfigToLocal();
+        renderProfile();
+        closeModal();
+        // Khởi động lại flying fish (giữ nguyên)
+        // Không cần reset flying fish, nó đã chạy sẵn.
+    }
+
+    // Hàm xử lý thêm/xóa trong modal (dynamic)
+    function bindModalEvents() {
+        document.getElementById('addSkillBtn').onclick = () => {
+            const div = document.createElement('div');
+            div.className = 'skill-row';
+            div.innerHTML = `<input type="text" placeholder="Tên kỹ năng"><input type="number" placeholder="%" value="0"><button type="button" class="removeSkillBtn">Xóa</button>`;
+            document.getElementById('skillsEditor').appendChild(div);
+            div.querySelector('.removeSkillBtn').onclick = () => div.remove();
+        };
+        document.getElementById('addAboutBtn').onclick = () => {
+            const div = document.createElement('div');
+            div.className = 'about-row';
+            div.innerHTML = `<input type="text" placeholder="Icon (fa-xxx)"><input type="text" placeholder="Nội dung"><button type="button" class="removeAboutBtn">Xóa</button>`;
+            document.getElementById('aboutEditor').appendChild(div);
+            div.querySelector('.removeAboutBtn').onclick = () => div.remove();
+        };
+        document.getElementById('addSocialBtn').onclick = () => {
+            const div = document.createElement('div');
+            div.className = 'social-row';
+            div.innerHTML = `<input type="text" placeholder="Key"><input type="text" placeholder="Link"><button type="button" class="removeSocialBtn">Xóa</button>`;
+            document.getElementById('socialEditor').appendChild(div);
+            div.querySelector('.removeSocialBtn').onclick = () => div.remove();
+        };
+        // Gán sự kiện xóa cho các nút có sẵn
+        document.querySelectorAll('.removeSkillBtn').forEach(btn => btn.onclick = function(){ this.closest('.skill-row').remove(); });
+        document.querySelectorAll('.removeAboutBtn').forEach(btn => btn.onclick = function(){ this.closest('.about-row').remove(); });
+        document.querySelectorAll('.removeSocialBtn').forEach(btn => btn.onclick = function(){ this.closest('.social-row').remove(); });
+    }
+
+    // Khởi động
+    window.onload = () => {
+        renderProfile();
+        initFlyingFish();
+        document.getElementById('editBtn').onclick = openEditor;
+        document.getElementById('closeModalBtn').onclick = closeModal;
+        document.getElementById('saveConfigBtn').onclick = saveChanges;
+        // Khi mở modal, cập nhật lại các nút xóa
+        const observer = new MutationObserver(() => bindModalEvents());
+        observer.observe(document.getElementById('skillsEditor'), { childList: true, subtree: true });
+        observer.observe(document.getElementById('aboutEditor'), { childList: true, subtree: true });
+        observer.observe(document.getElementById('socialEditor'), { childList: true, subtree: true });
+        bindModalEvents();
+    };
+</script>
+</body>
+</html>
